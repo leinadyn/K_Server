@@ -29,11 +29,10 @@ A thorough explanation on how to use it and which solvers are availlable can be 
 ---
 
 K_Server.py contains the K_Server class, which implements the following solvers:\
-Offline\
-
+Offline
 - one via dynamic programming
 - one via max-flow-min-cost\
-  Online\
+Online
 - randomized assignment
 - greedy approach
 - Follow the Prediction

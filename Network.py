@@ -59,21 +59,21 @@ class Min_Mean_Cycle_Cancel:
 
     Methods
     -------
-    f_aug_network(self)
+    f_aug_network()
         updates the residual graph according to the current flow
-    get_out_neighbours(self, m: np.ndarray, i: int)
+    get_out_neighbours(m, i)
         returns all out-neighbours
-    get_in_neighbours(self, m: np.ndarray, i: int)
+    get_in_neighbours(m, i)
         returns all in-neighbours
 
-    ford_fulkerson_max_flow(self)
+    ford_fulkerson_max_flow()
         computes a max-flow using the Ford-Fulkerson-algorithm
-    get_min_mean_cost_cycle(self, costs: np.ndarray, capacities: np.ndarray)
+    get_min_mean_cost_cycle(costs, capacities)
         returns if present the cycle with minimal negative mean cost of a strongly connected component; is based on Karp's theorem
-    kosarajus_algorithm(self, adj_mat: np.ndarray)
+    kosarajus_algorithm(adj_mat)
         returns all strongly connected components using Kosarajus-algorithm
 
-    min_mean_cycle_cancel(self)
+    min_mean_cycle_cancel()
         computes a max-flow-min-cost solution on the given network 
     """
 

@@ -14,7 +14,7 @@ The project itself only requires numpy apart from base python. If you want to ta
 
 ---
 
-A thorough explanation on how to use it and which solvers are availlable can be found in the "example" jupyter notebook.
+A thorough explanation on how to use it and which solvers are availlable can be found in the "examples" jupyter notebook.
 
     import K_Server as ks
 
@@ -28,12 +28,13 @@ A thorough explanation on how to use it and which solvers are availlable can be 
 
 ---
 
-K_Server.py contains the K_Server class, which implements the following solvers:
-Offline
+K_Server.py contains the K_Server class, which implements the following offline solvers:
 
 - one via dynamic programming
 - one via max-flow-min-cost
-  Online
+
+And the following online solvers:
+
 - randomized assignment
 - greedy approach
 - Follow the Prediction
@@ -41,7 +42,7 @@ Offline
 - deterministic combination of multiple algorithms
 - randomized combination of two algorithms
 
-In addition Network.py does the following two classes (though they are only helpers for the solvers):
+In addition Network.py provides the following two classes (though they are only helpers for the solvers):
 
 - a Network class, which is used as a data structure to compute network flows
 - a Min_Mean_Cycle_Cancel class, which implements the min-mean-cycle-reduction algorithm for computing max-flows with minimal cost and other graph algorithms

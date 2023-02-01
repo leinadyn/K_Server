@@ -14,7 +14,7 @@ The project itself only requires numpy apart from base python. If you want to ta
 
 ---
 
-A thorough explanation on how to use it and which solvers are availlable can be found in the "example" jupyter notebook.
+A thorough explanation on how to use it and which solvers are availlable can be found in the "examples" jupyter notebook.
 
     import K_Server as ks
 

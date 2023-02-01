@@ -189,7 +189,8 @@ class Min_Mean_Cycle_Cancel:
                 for j in visited[path[i]]:
                     mean_cost = sum([costs[path[k], path[k+1]]
                                      for k in range(j, i)])/(i-j)
-                    if mean_cost == min_mean:
+                    if math.isclose(mean_cost, min_mean, abs_tol=1e-10):
+                        # if mean_cost == min_mean:
                         return mean_cost, path[j:i+1]
                 visited[path[i]].append(i)
         print("error: path not found")

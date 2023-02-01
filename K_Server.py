@@ -56,7 +56,7 @@ class K_Server:
         generates predicted configurations for ftp using the given solver and deviation probability
     """
 
-    def __init__(self, init_config: list, requests: list, diameter: float = None, prediction_list: list = None):
+    def __init__(self, init_config: list, requests: list, prediction_list: list = None, diameter: float = None):
         self.servers: list = init_config
         self.requests: list = requests
         self.pos: list = init_config + requests

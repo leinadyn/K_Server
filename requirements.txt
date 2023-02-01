@@ -1,0 +1,8 @@
+numpy
+
+#if you should want to use the example jupyter notebook:
+IPython
+jupyter_client
+jupyter_core
+jupyterlab
+notebook

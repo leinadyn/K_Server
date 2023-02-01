@@ -24,7 +24,7 @@ A thorough explanation on how to use it and which solvers are availlable can be 
     problem = ks.K_Server(servers, requests)
     problem.execute_opt_dp()
 
-## Features
+$Features
 
 ---
 

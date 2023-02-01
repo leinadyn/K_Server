@@ -493,7 +493,7 @@ class K_Server:
         return cost, req_serv
 
     def execute_combine_deterministic(self, solver: list) -> float:
-        """Computes an online solution by combining two solvers in a deterministic way; see https://arxiv.org/abs/2003.02144 for details
+        """Computes an online solution by combining multiple solvers in a deterministic way; see https://arxiv.org/abs/2003.02144 for details
 
         Parameters
         ----------
@@ -560,7 +560,7 @@ class K_Server:
 
         m = len(solver)
         assert m == 2
-        assert eps < .5 and eps >= 0
+        assert eps < .5 and eps > 0
 
         beta = 1 - eps/2
         w = [1 for i in range(0, m)]

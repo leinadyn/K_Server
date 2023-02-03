@@ -1,6 +1,6 @@
 import numpy as np
 import math
-import Network as net
+from source import Network as net
 
 
 class K_Server:
@@ -194,12 +194,13 @@ class K_Server:
             req = self.__opt_network_find_path(opt_flow, i+1, [])
             for k in req:
                 index_list[k] = i
-        cost = self.__opt_network_get_cost(index_list)
+        cost = self.get_cost(index_list)
         return cost, index_list
 
-    def __opt_network_get_cost(self, index_list: list) -> float:
+    def get_cost(self, index_list: list) -> float:
         config = list(range(0, len(self.servers)))
         cost = 0
+        
         for r in range(0, len(index_list)):
             cost = cost + self.pos[config[index_list[r]]
                                    ].dist(self.requests[r])

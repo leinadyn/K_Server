@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>The K-Server Problem</title>
+    <link
+      rel="icon"
+      type="image/vnd.microsoft.icon"
+      href="/static/images/server.ico"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="game-head">
+        <div id="project-head-img">
+          <img src="/static/images/server.ico" />
+        </div>
+        <div id="project-name">
+          <h4>K-Server</h4>
+          <h6>by leinadyn</h6>
+        </div>
+      </div>
+      <div id="options-head">
+        <div id="head-icon" title="You want to know more about the implementation and the algorithms applied? Have a look at the example Jupyter Notebook.">
+          <a href="https://github.com/leinadyn/K_Server/">
+            <i class="fa fa-info-circle"></i>
+          </a>
+          <i class="fa fa-refresh" onclick="restart();"></i>
+        </div>
+      </div>
+      <div id="options-box">
+        <div class="first-box">
+          <div class="options">
+            <div class="inner-options">
+              <h5>You know the K-Server problem and feel prepared to compete against other algorithms? Select the options you like and start the game.&#10</h5>
+              <p>Each time you have to click on the server (colored icons) you want to assign to the current pending request (question mark icon). At the end you will see your score compared to the other algorithms. If you should not know the K-Server problem, have a look at the Jupyter Notebook.</p>
+              <p>Please select the number of Servers: 
+                <select id="servers">
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </p>
+              
+              <p>Please select the request configuration: 
+                <select id="requests">
+                  <option>North</option>
+                  <option>Scattered</option>
+                  <option>Random</option>
+                  <option>Borders</option>
+                  <option>Hotspots</option>
+                </select>
+              </p>
+
+              <p>Please select the pred_solver: 
+                <select id="pred_solver">
+                  <option>opt_solver</option>
+                  <option>random_solver</option>
+                  <option>greedy_solver</option>
+                  <option>wfa_network_solver</option>
+                </select>
+              </p>
+              
+              <p>Please select the pred_error: 
+                <select id="pred_error">
+                  <option>0</option>
+                  <option>0.1</option>
+                  <option>0.2</option>
+                  <option>0.3</option>
+                  <option>0.4</option>
+                  <option>0.5</option>
+                  <option>0.6</option>
+                  <option>0.7</option>
+                  <option>0.8</option>
+                  <option>0.9</option>
+                </select>
+              </p>
+
+              <p>
+                <input type="button" value="Start" onclick="start();">
+                <input type="button" value="Reset" onclick="reset();">
+              </p>
+              
+              
+              <table id="results">
+                <tr>
+                  <th>Algorithm </th>
+                  <th>Score </th>
+                  <th>Rank </th>
+                </tr>
+                <tr>
+                  <td>Your score</td>
+                  <td id="your_score">0</td>
+                  <td id="your_rank">0</td>
+                </tr>
+                <tr>
+                  <td>opt_net</td>
+                  <td id="opt_score">0</td>
+                  <td id="opt_rank">0</td>
+                </tr>
+                <tr>
+                  <td>random</td>
+                  <td id="rand_score">0</td>
+                  <td id="rand_rank">0</td>
+                </tr>
+                <tr>
+                  <td>greedy</td>
+                  <td id="greed_score">0</td>
+                  <td id="greed_rank">0</td>
+                </tr>
+                <tr>
+                  <td>ftp</td>
+                  <td id="ftp_score">0</td>
+                  <td id="ftp_rank">0</td>
+                </tr>
+                <tr>
+                  <td>wfa</td>
+                  <td id="wfa_score">0</td>
+                  <td id="wfa_rank">0</td>
+                </tr>
+                <tr>
+                  <td>combine det</td>
+                  <td id="comb_det_score">0</td>
+                  <td id="comb_det_rank">0</td>
+                </tr>
+                <tr>
+                  <td>combine rand</td>
+                  <td id="comb_ran_score">0</td>
+                  <td id="comb_ran_rank">0</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="game-box">
+        <div class="container" id="map_box">
+          <div class="alert info" id="info-box">
+            <span class="closebtn" id="info">&times;</span>  
+            <strong id="info-text">Info!</strong>
+          </div>
+
+          <img id="map" src="/static/images/map2.png">
+          <span class="time" id="time">time: 0 </span>
+        </div> 
+      </div>
+
+      <div id="game-bottom"></div>
+      <div id="options-bottom"></div>
+    </div>
+
+
+    <script>
+      var started = false;
+      var server_list = [];
+      var time = 0;
+      var req_assigned = [];
+      var request_list = [];
+      finished_bool = false;
+      
+      request_configs = {North: 0, Scattered: 1, Random: 2, Borders: 3, Hotspots: 4};
+      pred_solvers = {opt_solver:0, random_solver:1, greedy_solver:2, wfa_network_solver:3};
+
+      function start() {
+        if (started == false) {
+          started = true
+          var num_serv = Number(document.getElementById('servers').value);
+          var req_config = request_configs[document.getElementById('requests').value];
+          var pred_solver_index = pred_solvers[document.getElementById('pred_solver').value];
+          var pred_error_index = Number(document.getElementById('pred_error').value);
+
+          $.get('/get_requests', { k:req_config, num_server:num_serv, pred_solver:pred_solver_index, pred_error:pred_error_index }).done(function (data) {
+            request_list = data;
+            $('#map_box').append('<img src="/static/images/question.png" id="request" style="left: ' + request_list[0][0] + 'px; bottom: ' + request_list[0][1] + 'px;">');
+          });
+
+          document.getElementById('time').style.visibility = "visible";
+
+          for (let i = 0; i < num_serv; i++) {
+            new_avatar = '<img src="/static/images/icon_' + i + '.png" id="avatar' + i + '" class="avatar" onclick="update_game(' + i + ');" style="bottom: ' + 10 + 'px; left: ' + (50+i*20) + 'px;">';
+            $('#map_box').append(new_avatar);
+            server_list.push("avatar" + i);
+          }
+        }
+      }
+
+      function finished() {
+        if (finished_bool == false) {
+          finished_bool = true;
+          console.log(req_assigned);
+          $.get('/solve', { index_list:req_assigned.toString() }).done(function (data) {
+            console.log(data);
+
+            document.getElementById('your_score').innerHTML = Math.round((data[0] + Number.EPSILON) * 100) / 100;
+            document.getElementById('opt_score').innerHTML = Math.round((data[1] + Number.EPSILON) * 100) / 100;
+            document.getElementById('rand_score').innerHTML = Math.round((data[2] + Number.EPSILON) * 100) / 100;
+            document.getElementById('greed_score').innerHTML = Math.round((data[3] + Number.EPSILON) * 100) / 100;
+            document.getElementById('ftp_score').innerHTML = Math.round((data[4] + Number.EPSILON) * 100) / 100;
+            document.getElementById('wfa_score').innerHTML = Math.round((data[5] + Number.EPSILON) * 100) / 100;
+            document.getElementById('comb_det_score').innerHTML = Math.round((data[6] + Number.EPSILON) * 100) / 100;
+            document.getElementById('comb_ran_score').innerHTML = Math.round((data[7] + Number.EPSILON) * 100) / 100;
+
+            document.getElementById('your_rank').innerHTML = data[8];
+            document.getElementById('opt_rank').innerHTML = data[9];
+            document.getElementById('rand_rank').innerHTML = data[10];
+            document.getElementById('greed_rank').innerHTML = data[11];
+            document.getElementById('ftp_rank').innerHTML = data[12];
+            document.getElementById('wfa_rank').innerHTML = data[13];
+            document.getElementById('comb_det_rank').innerHTML = data[14];
+            document.getElementById('comb_ran_rank').innerHTML = data[15];
+            
+            var place = data[8]
+            if (place==0) {
+              
+              document.getElementById("info-text").innerHTML = "You got a perfect score. Congratulations!"
+              document.getElementById("info-box").style.opacity = "1";
+              document.getElementById("info-box").style.visibility = "visible";
+            } else {
+              console.log("test")
+              document.getElementById("info-text").innerHTML = "Yout got " + (place+1) + ". place. There is still room for improvement :)"
+              document.getElementById("info-box").style.opacity = "1";
+              document.getElementById("info-box").style.visibility = "visible";
+              console.log(document.getElementById("info-box").style.visibility)
+            }
+
+          });
+        }
+      }
+
+      function update_game(s) {
+        if (time<request_list.length) {
+          var bottom = document.getElementById('request').style.bottom;
+          var left = document.getElementById('request').style.left;
+          document.getElementById("avatar" + s).style.bottom = bottom;
+          document.getElementById("avatar" + s).style.left = left;
+          req_assigned.push(s);
+          time=time+1;
+        }
+        
+        if (time==request_list.length) {
+          document.getElementById('time').innerText = "time: FINISHED";
+          document.getElementById('request').style.visibility = "hidden";
+          finished();
+        } else {
+          document.getElementById('time').innerText = "time: " + time;
+          document.getElementById('request').style.bottom = "" + request_list[time][1] + "px";
+          document.getElementById('request').style.left = "" + request_list[time][0] + "px";
+        }
+      }
+
+
+      function reset() {
+        started = false;
+        finished_bool = false;
+        
+        document.getElementById("info-box").style.visibility = "collapse";
+
+        document.getElementById('time').style.visibility = "hidden";
+        document.getElementById('time').innerText = "time: 0";
+        time=0
+        document.getElementById("request").remove();
+        for (let i = 0; i < server_list.length; i++) {
+          document.getElementById(server_list[i]).remove();
+        }
+        server_list = [];
+        request_list = [];
+        req_assigned = [];
+        console.log(request_list);
+        document.getElementById('your_score').innerHTML = 0;
+        document.getElementById('opt_score').innerHTML = 0;
+        document.getElementById('rand_score').innerHTML = 0;
+        document.getElementById('greed_score').innerHTML = 0;
+        document.getElementById('ftp_score').innerHTML = 0;
+        document.getElementById('wfa_score').innerHTML = 0;
+        document.getElementById('comb_det_score').innerHTML = 0;
+        document.getElementById('comb_ran_score').innerHTML = 0;
+
+        document.getElementById('your_rank').innerHTML = 0;
+        document.getElementById('opt_rank').innerHTML = 0;
+        document.getElementById('rand_rank').innerHTML = 0;
+        document.getElementById('greed_rank').innerHTML = 0;
+        document.getElementById('ftp_rank').innerHTML = 0;
+        document.getElementById('wfa_rank').innerHTML = 0;
+        document.getElementById('comb_det_rank').innerHTML = 0;
+        document.getElementById('comb_ran_rank').innerHTML = 0;
+      }
+
+      function restart() {
+        window.location.reload(true);
+        return false;
+      }
+    </script>
+
+    <script>
+      var close = document.getElementById("info");
+      
+      close.onclick = function(){
+        var div = this.parentElement;
+        div.style.opacity = "0";
+        setTimeout(function(){ div.style.visibility = "hidden"; }, 600);
+      }
+      </script>
+
+  </body>
+</html>

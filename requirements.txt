@@ -6,3 +6,6 @@ jupyter_client
 jupyter_core
 jupyterlab
 notebook
+
+#if you should want to compete against the algorithms yourself you need flask:
+flask 

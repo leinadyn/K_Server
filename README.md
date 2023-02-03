@@ -47,6 +47,20 @@ In addition Network.py provides the following two classes (though they are only 
 - a Network class, which is used as a data structure to compute network flows
 - a Min_Mean_Cycle_Cancel class, which implements the min-mean-cycle-reduction algorithm for computing max-flows with minimal cost and other graph algorithms
 
+## Test your Understanding?
+
+If you want to test if you are as good as the different algorithms, you can run the flask application and comoete with them in different settings.
+Just install flask and run the 'run.py' script. You can then find the app at http://127.0.0.1:5000.\
+What is the the small app about? You have to assign your servers to upcoming requests (10 in total), while of course trying to minimize your overall distance. At the end you can compare your score with other online algorithms and the optimal solution. You can choose different request settings and different numbers of server. There is also the pissibility to choose the predictor and the deviation probability for the FollowThePrediction algorithm. The algorithms you are competing against are:
+- optimal offline solution
+- random assignment
+- greedy approach
+- Follow the Prediction
+- Work-Function-Algorithm
+- deterministic combination of FtP and OPT
+- randomized combination of FtP and OPT
+
+
 ## Contribute
 
 ---

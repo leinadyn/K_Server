@@ -45,9 +45,9 @@ solver = []
 def set_request_config(k):
     global requests_config
     if k==0:
-        requests_config = [Point_2D(350, 490), Point_2D(280, 470), Point_2D(360, 370), Point_2D(220, 365), Point_2D(360, 370), Point_2D(190, 410), Point_2D(230, 450), Point_2D(360, 370), 
-        Point_2D(240, 500), Point_2D(360, 370)]
-        requests_config_js = [[350,490], [280,470], [360,370], [220,365], [360,370], [190,410], [230,450], [360,370], [240,500], [360,370]]
+        requests_config = [Point_2D(350, 490), Point_2D(280, 470), Point_2D(350, 360), Point_2D(220, 365), Point_2D(375, 385), Point_2D(190, 410), Point_2D(230, 450), Point_2D(350, 360), 
+        Point_2D(240, 500), Point_2D(340, 370)]
+        requests_config_js = [[350,490], [280,470], [350,360], [220,365], [375,385], [190,410], [230,450], [350,360], [240,500], [340,370]]
     elif k==1:
         requests_config = [Point_2D(110,150), Point_2D(350,260), Point_2D(200,240), Point_2D(300,120), Point_2D(140,400), Point_2D(100,170), Point_2D(400,400), Point_2D(245,278),
         Point_2D(178,150), Point_2D(335,155)]

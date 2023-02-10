@@ -26,7 +26,10 @@ img {
   height: 30px;
   border-radius: 50%;
   position: absolute;
-  cursor: pointer
+  cursor: pointer;
+  border-style: hidden;
+  border-width: 2px;
+  border-color: #0065bd;
 }
 
 #request {
@@ -142,6 +145,8 @@ img {
   font-size: 14px;
   margin: 8px 0 0;
 }
+
+
 
 #game-bottom {
   grid-column: 1;

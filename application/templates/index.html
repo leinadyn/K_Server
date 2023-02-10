@@ -22,8 +22,6 @@
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!--<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>-->
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>-->
   </head>
 
   <body>
@@ -50,7 +48,7 @@
           <div class="options">
             <div class="inner-options">
               <h5>You know the K-Server problem and feel prepared to compete against other algorithms? Select the options you like and start the game.&#10</h5>
-              <p>Each time you have to click on the server (colored icons) you want to assign to the current pending request (question mark icon). At the end you will see your score compared to the other algorithms. If you should not know the K-Server problem, have a look at the Jupyter Notebook.</p>
+              <p>Each time you have to click on the server (colored icons) you want to assign to the current pending request (question mark icon). At the end you will see your score compared to the other algorithms.</p>
               <p>Please select the number of Servers: 
                 <select id="servers">
                   <option>2</option>
@@ -94,10 +92,19 @@
                 </select>
               </p>
 
+              <p>Predictions visible? 
+                <select id="pred_vis">
+                  <option>Yes</option>
+                  <option>No</option>
+                </select>
+              </p>
+
               <p>
                 <input type="button" value="Start" onclick="start();">
                 <input type="button" value="Reset" onclick="reset();">
               </p>
+
+              
               
               
               <table id="results">
@@ -107,44 +114,44 @@
                   <th>Rank </th>
                 </tr>
                 <tr>
-                  <td>Your score</td>
-                  <td id="your_score">0</td>
-                  <td id="your_rank">0</td>
+                  <td id="tbl_0_0"><u>Your score</u></td>
+                  <td id="tbl_0_1">0</td>
+                  <td id="tbl_0_2">0</td>
                 </tr>
                 <tr>
-                  <td>opt_net</td>
-                  <td id="opt_score">0</td>
-                  <td id="opt_rank">0</td>
+                  <td id="tbl_1_0">opt_net</td>
+                  <td id="tbl_1_1">0</td>
+                  <td id="tbl_1_2">0</td>
                 </tr>
                 <tr>
-                  <td>random</td>
-                  <td id="rand_score">0</td>
-                  <td id="rand_rank">0</td>
+                  <td id="tbl_2_0">random</td>
+                  <td id="tbl_2_1">0</td>
+                  <td id="tbl_2_2">0</td>
                 </tr>
                 <tr>
-                  <td>greedy</td>
-                  <td id="greed_score">0</td>
-                  <td id="greed_rank">0</td>
+                  <td id="tbl_3_0">greedy</td>
+                  <td id="tbl_3_1">0</td>
+                  <td id="tbl_3_2">0</td>
                 </tr>
                 <tr>
-                  <td>ftp</td>
-                  <td id="ftp_score">0</td>
-                  <td id="ftp_rank">0</td>
+                  <td id="tbl_4_0">ftp</td>
+                  <td id="tbl_4_1">0</td>
+                  <td id="tbl_4_2">0</td>
                 </tr>
                 <tr>
-                  <td>wfa</td>
-                  <td id="wfa_score">0</td>
-                  <td id="wfa_rank">0</td>
+                  <td id="tbl_5_0">wfa</td>
+                  <td id="tbl_5_1">0</td>
+                  <td id="tbl_5_2">0</td>
                 </tr>
                 <tr>
-                  <td>combine det</td>
-                  <td id="comb_det_score">0</td>
-                  <td id="comb_det_rank">0</td>
+                  <td id="tbl_6_0">combine det</td>
+                  <td id="tbl_6_1">0</td>
+                  <td id="tbl_6_2">0</td>
                 </tr>
                 <tr>
-                  <td>combine rand</td>
-                  <td id="comb_ran_score">0</td>
-                  <td id="comb_ran_rank">0</td>
+                  <td id="tbl_7_0">combine rand</td>
+                  <td id="tbl_7_1">0</td>
+                  <td id="tbl_7_2">0</td>
                 </tr>
               </table>
             </div>
@@ -159,7 +166,7 @@
           </div>
 
           <img id="map" src="/static/images/map2.png">
-          <span class="time" id="time">time: 0 </span>
+          <span id="time">time: 0 </span>
         </div> 
       </div>
 
@@ -179,66 +186,110 @@
       request_configs = {North: 0, Scattered: 1, Random: 2, Borders: 3, Hotspots: 4};
       pred_solvers = {opt_solver:0, random_solver:1, greedy_solver:2, wfa_network_solver:3};
 
-      function start() {
+      var predictions = [];
+      var see_pred = false;
+
+      async function start() {
         if (started == false) {
           started = true
           var num_serv = Number(document.getElementById('servers').value);
           var req_config = request_configs[document.getElementById('requests').value];
           var pred_solver_index = pred_solvers[document.getElementById('pred_solver').value];
           var pred_error_index = Number(document.getElementById('pred_error').value);
+          var text = document.getElementById('pred_vis').value;
 
-          $.get('/get_requests', { k:req_config, num_server:num_serv, pred_solver:pred_solver_index, pred_error:pred_error_index }).done(function (data) {
+          if (text == "Yes") {
+            see_pred = true;
+          } else {
+            see_pred = false;
+          }
+          
+          $.get('/getRequests', { k:req_config }).done(function (data) {
             request_list = data;
             $('#map_box').append('<img src="/static/images/question.png" id="request" style="left: ' + request_list[0][0] + 'px; bottom: ' + request_list[0][1] + 'px;">');
           });
 
-          document.getElementById('time').style.visibility = "visible";
+          var k = await $.get('/init', { num_server:num_serv, pred_solver:pred_solver_index, pred_error:pred_error_index }).done(function (data) {
+            predictions = data;
+            return data;
+          });
 
-          for (let i = 0; i < num_serv; i++) {
+          var icon = addIcons(num_serv, pred_solver_index, pred_error_index, k[0]);
+
+          document.getElementById('time').style.visibility = "visible";
+        }
+      }
+
+      function addIcons(num_serv, pred_solver_index, pred_error_index, k) {
+        for (let i = 0; i < num_serv; i++) {
             new_avatar = '<img src="/static/images/icon_' + i + '.png" id="avatar' + i + '" class="avatar" onclick="update_game(' + i + ');" style="bottom: ' + 10 + 'px; left: ' + (50+i*20) + 'px;">';
             $('#map_box').append(new_avatar);
             server_list.push("avatar" + i);
-          }
+        }
+        if (see_pred) {
+          document.getElementById("avatar" + k).style.borderStyle = "solid"
         }
       }
+
+
+      let algorithms = ['<u>Your score</u>', 'opt_net', 'random', 'greedy', 'wfa', 'ftp', 'combine det', 'combine_rand'];
 
       function finished() {
         if (finished_bool == false) {
           finished_bool = true;
-          console.log(req_assigned);
           $.get('/solve', { index_list:req_assigned.toString() }).done(function (data) {
-            console.log(data);
-
-            document.getElementById('your_score').innerHTML = Math.round((data[0] + Number.EPSILON) * 100) / 100;
-            document.getElementById('opt_score').innerHTML = Math.round((data[1] + Number.EPSILON) * 100) / 100;
-            document.getElementById('rand_score').innerHTML = Math.round((data[2] + Number.EPSILON) * 100) / 100;
-            document.getElementById('greed_score').innerHTML = Math.round((data[3] + Number.EPSILON) * 100) / 100;
-            document.getElementById('ftp_score').innerHTML = Math.round((data[4] + Number.EPSILON) * 100) / 100;
-            document.getElementById('wfa_score').innerHTML = Math.round((data[5] + Number.EPSILON) * 100) / 100;
-            document.getElementById('comb_det_score').innerHTML = Math.round((data[6] + Number.EPSILON) * 100) / 100;
-            document.getElementById('comb_ran_score').innerHTML = Math.round((data[7] + Number.EPSILON) * 100) / 100;
-
-            document.getElementById('your_rank').innerHTML = data[8];
-            document.getElementById('opt_rank').innerHTML = data[9];
-            document.getElementById('rand_rank').innerHTML = data[10];
-            document.getElementById('greed_rank').innerHTML = data[11];
-            document.getElementById('ftp_rank').innerHTML = data[12];
-            document.getElementById('wfa_rank').innerHTML = data[13];
-            document.getElementById('comb_det_rank').innerHTML = data[14];
-            document.getElementById('comb_ran_rank').innerHTML = data[15];
+            var row_indices = data.slice(16);
             
-            var place = data[8]
-            if (place==0) {
+            var your_rank = data[8];
+            var opt_rank = data[9];
+            var rand_rank = data[10];
+            var greed_rank = data[11];
+            var ftp_rank = data[12];
+            var wfa_rank = data[13];
+            var comb_det_rank = data[14];
+            var comb_ran_rank = data[15];
+
+            document.getElementById('tbl_' + row_indices[0] + '_0').innerHTML = algorithms[0];
+            document.getElementById('tbl_' + row_indices[0] + '_1').innerHTML = Math.round((data[0] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[0] + '_2').innerHTML = your_rank;
+
+            document.getElementById('tbl_' + row_indices[1] + '_0').innerHTML = algorithms[1];
+            document.getElementById('tbl_' + row_indices[1] + '_1').innerHTML = Math.round((data[1] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[1] + '_2').innerHTML = opt_rank;
+
+            document.getElementById('tbl_' + row_indices[2] + '_0').innerHTML = algorithms[2];
+            document.getElementById('tbl_' + row_indices[2] + '_1').innerHTML = Math.round((data[2] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[2] + '_2').innerHTML = rand_rank;
+
+            document.getElementById('tbl_' + row_indices[3] + '_0').innerHTML = algorithms[3];
+            document.getElementById('tbl_' + row_indices[3] + '_1').innerHTML = Math.round((data[3] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[3] + '_2').innerHTML = greed_rank;
+
+            document.getElementById('tbl_' + row_indices[4] + '_0').innerHTML = algorithms[4];
+            document.getElementById('tbl_' + row_indices[4] + '_1').innerHTML = Math.round((data[4] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[4] + '_2').innerHTML = ftp_rank;
+
+            document.getElementById('tbl_' + row_indices[5] + '_0').innerHTML = algorithms[5];
+            document.getElementById('tbl_' + row_indices[5] + '_1').innerHTML = Math.round((data[5] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[5] + '_2').innerHTML = wfa_rank;
+
+            document.getElementById('tbl_' + row_indices[6] + '_0').innerHTML = algorithms[6];
+            document.getElementById('tbl_' + row_indices[6] + '_1').innerHTML = Math.round((data[6] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[6] + '_2').innerHTML = comb_det_rank;
+
+            document.getElementById('tbl_' + row_indices[7] + '_0').innerHTML = algorithms[7];
+            document.getElementById('tbl_' + row_indices[7] + '_1').innerHTML = Math.round((data[7] + Number.EPSILON) * 100) / 100;
+            document.getElementById('tbl_' + row_indices[7] + '_2').innerHTML = comb_ran_rank;
+
+            if (your_rank==1) {
               
               document.getElementById("info-text").innerHTML = "You got a perfect score. Congratulations! 🏆"
               document.getElementById("info-box").style.opacity = "1";
               document.getElementById("info-box").style.visibility = "visible";
             } else {
-              console.log("test")
-              document.getElementById("info-text").innerHTML = "You got " + (place+1) + ". place. There is still room for improvement 😃"
+              document.getElementById("info-text").innerHTML = "You got " + (your_rank) + ". place. There is still room for improvement 😃"
               document.getElementById("info-box").style.opacity = "1";
               document.getElementById("info-box").style.visibility = "visible";
-              console.log(document.getElementById("info-box").style.visibility)
             }
 
           });
@@ -258,9 +309,16 @@
         if (time==request_list.length) {
           document.getElementById('time').innerText = "time: FINISHED";
           document.getElementById('request').style.visibility = "hidden";
+          document.getElementById("avatar" + predictions[time-1]).style.borderStyle="hidden";
           finished();
         } else {
+          if (see_pred) {
+            document.getElementById("avatar" + predictions[time-1]).style.borderStyle="hidden";
+            document.getElementById("avatar" + predictions[time]).style.borderStyle="solid"; 
+          }
+
           document.getElementById('time').innerText = "time: " + time;
+
           document.getElementById('request').style.bottom = "" + request_list[time][1] + "px";
           document.getElementById('request').style.left = "" + request_list[time][0] + "px";
         }
@@ -283,24 +341,24 @@
         server_list = [];
         request_list = [];
         req_assigned = [];
-        console.log(request_list);
-        document.getElementById('your_score').innerHTML = 0;
-        document.getElementById('opt_score').innerHTML = 0;
-        document.getElementById('rand_score').innerHTML = 0;
-        document.getElementById('greed_score').innerHTML = 0;
-        document.getElementById('ftp_score').innerHTML = 0;
-        document.getElementById('wfa_score').innerHTML = 0;
-        document.getElementById('comb_det_score').innerHTML = 0;
-        document.getElementById('comb_ran_score').innerHTML = 0;
 
-        document.getElementById('your_rank').innerHTML = 0;
-        document.getElementById('opt_rank').innerHTML = 0;
-        document.getElementById('rand_rank').innerHTML = 0;
-        document.getElementById('greed_rank').innerHTML = 0;
-        document.getElementById('ftp_rank').innerHTML = 0;
-        document.getElementById('wfa_rank').innerHTML = 0;
-        document.getElementById('comb_det_rank').innerHTML = 0;
-        document.getElementById('comb_ran_rank').innerHTML = 0;
+        document.getElementById('tbl_0_1').innerHTML = 0;
+        document.getElementById('tbl_1_1').innerHTML = 0;
+        document.getElementById('tbl_2_1').innerHTML = 0;
+        document.getElementById('tbl_3_1').innerHTML = 0;
+        document.getElementById('tbl_4_1').innerHTML = 0;
+        document.getElementById('tbl_5_1').innerHTML = 0;
+        document.getElementById('tbl_6_1').innerHTML = 0;
+        document.getElementById('tbl_7_1').innerHTML = 0;
+
+        document.getElementById('tbl_0_2').innerHTML = 0;
+        document.getElementById('tbl_1_2').innerHTML = 0;
+        document.getElementById('tbl_2_2').innerHTML = 0;
+        document.getElementById('tbl_3_2').innerHTML = 0;
+        document.getElementById('tbl_4_2').innerHTML = 0;
+        document.getElementById('tbl_5_2').innerHTML = 0;
+        document.getElementById('tbl_6_2').innerHTML = 0;
+        document.getElementById('tbl_7_2').innerHTML = 0;
       }
 
       function restart() {

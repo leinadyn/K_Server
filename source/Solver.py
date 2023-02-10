@@ -606,7 +606,7 @@ class K_Server:
                 break
         return cur_cost
 
-    def generate_prediction_list(self, solver, error_prob: float = 0) -> list:
+    def generate_prediction_list(self, solver, error_prob: float = 0) -> tuple:
         """Generates a list with predicted configurations which can be used by the ftp_solver
 
         Parameters
@@ -619,8 +619,10 @@ class K_Server:
 
         Returns
         -------
-        list
-            a list of predicted configurations (a configuration is a list with a position index for each server referring to self.pos)
+        tuple
+            a tuple of 
+                1. predicted configurations (a configuration is a list with a position index for each server referring to self.pos)
+                2. a list with an assigned server for every request; only used for the app
         """
 
         assert error_prob >= 0 and error_prob <= 1
@@ -630,6 +632,7 @@ class K_Server:
         prediction_list = []
 
         config = range(0, num_serv)
+        assignment_list = []
 
         for time in range(0, num_req):
             move = solver(config, time)
@@ -638,5 +641,7 @@ class K_Server:
             config = [config[i] if i != move else num_serv +
                       time for i in range(0, num_serv)]
             prediction_list.append(config)
+            print(move)
+            assignment_list.append(move)
         self.prediction_list = prediction_list
-        return prediction_list
+        return prediction_list, assignment_list

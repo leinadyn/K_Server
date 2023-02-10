@@ -87,16 +87,24 @@ def set_problem(num_server, pred_solver, pred_error):
 
     solver = [problem.opt_solver, problem.random_solver, problem.greedy_solver, problem.wfa_network_solver, problem.ftp_solver]
     assert pred_solver != 4
-    problem.generate_prediction_list(solver[pred_solver], pred_error)
+    pred_configs, pred_assigned = problem.generate_prediction_list(solver[pred_solver], pred_error)
+    return pred_assigned
+
 
 
 def solve_problem():
     global solver, problem
-    opt_net = problem.execute_opt_network()[0]
-    random = problem.execute_random()[0]
-    greedy = problem.execute_greedy()[0]
-    ftp = problem.execute_ftp()[0]
-    wfa = problem.execute_wfa()[0]
+    opt_net, opt_way = problem.execute_opt_network()
+    random, rand_way = problem.execute_random()
+    greedy, greed_way = problem.execute_greedy()
+    ftp, ftp_way = problem.execute_ftp()
+    wfa, wfa_way = problem.execute_wfa()
+
+    print("opt: ", opt_net, " ", opt_way, " ", get_cost(opt_way))
+    print("rand: ",random , " ", rand_way, " ", get_cost(rand_way))
+    print("greed: ",greedy , " ", greed_way, " ", get_cost(greed_way))
+    print("ftp: ",ftp , " ", ftp_way, " ", get_cost(ftp_way))
+    print("wfa: ",wfa , " ", wfa_way, " ", get_cost(wfa_way))
 
     eps = 0.01
 
@@ -108,4 +116,5 @@ def solve_problem():
 
 def get_cost(index_list):
     global problem
+    
     return problem.get_cost(index_list)

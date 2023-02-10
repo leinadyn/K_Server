@@ -8,15 +8,20 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/get_requests")
-def get_requests_and_initialize():
+@app.route("/getRequests")
+def get_requests():
     k = int(request.args.get('k'))
+    requests = p.set_request_config(k)
+    return requests
+
+@app.route("/init")
+def initialize_and_get_preds():
     num_server = int(request.args.get('num_server'))
     pred_solver = int(request.args.get('pred_solver'))
     pred_error = float(request.args.get('pred_error'))
-    requests = p.set_request_config(k)
-    p.set_problem(num_server, pred_solver, pred_error)
-    return requests
+    predictions = p.set_problem(num_server, pred_solver, pred_error)
+    predictions = [int(p) for p in predictions]
+    return predictions
 
 @app.route("/solve")
 def solve():
@@ -24,8 +29,10 @@ def solve():
     index_list = [int(x) for x in index_list.split(',')]
     values = p.solve_problem()
     cost = p.get_cost(index_list)
+    print("may way: ", cost, " ", index_list)
     costs = [cost]+values
-    ranking = [sorted(costs).index(x) for x in costs]
-    return costs + ranking
-
-
+    ranking = [sorted(costs).index(x) + 1 for x in costs]
+    order = [i[0] for i in sorted(enumerate(costs), key=lambda x:x[1])]
+    row_ind = [order.index(x) for x in range(0,len(costs))]
+    print(row_ind)
+    return costs + ranking + row_ind

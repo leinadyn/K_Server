@@ -51,7 +51,7 @@ In addition Network.py provides the following two classes (though they are only 
 
 If you want to test if you are as good as the implemented algorithms, you can run the flask application and compete with them in different settings.
 Just install flask and run the 'run.py' script. You can then find the app locally at http://127.0.0.1:5000.\. On small screens you might need to zoom out a bit to see everything properly.
-What is the app about? You have to assign your servers to upcoming requests (10 in total), while trying to minimize your overall traveled distance. At the end you can compare your score with other online algorithms and the optimal solution. You can choose different request settings and different numbers of servers. There is also the possibility to choose the predictor and the deviation probability for the FollowThePrediction algorithm. The algorithms you are competing against are:
+What is the app about? You have to assign your servers to upcoming requests (10 in total), while trying to minimize your overall traveled distance. At the end you can compare your score with other online algorithms and the optimal solution. You can choose different request settings and different numbers of servers. There is also the possibility to choose the predictor and the deviation probability for the FollowThePrediction algorithm. If wanted, the server which is predicted to be assigned to the current pending request can also be made visible, indicated by a blue circle. The algorithms you are competing against are:
 - optimal offline solution
 - random assignment
 - greedy approach

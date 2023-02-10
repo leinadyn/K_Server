@@ -60,7 +60,7 @@ What is the app about? You have to assign your servers to upcoming requests (10 
 - deterministic combination of FtP and OPT
 - randomized combination of FtP and OPT
 
-![screenshot of the application](/application/static/images/Screenshot.png "Screenshot of the application")
+![screenshot of the application](/application/static/images/Screenshot_0.png "Screenshot of the application")
 
 ## Contribute
 

@@ -78,7 +78,7 @@ target/
 .ipynb_checkpoints
 
 # papers an sources
-.literature
+literature/
 
 # IPython
 profile_default/

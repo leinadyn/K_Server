@@ -18,9 +18,10 @@ def get_requests():
 def initialize_and_get_preds():
     num_server = int(request.args.get('num_server'))
     pred_solver = int(request.args.get('pred_solver'))
-    pred_error = float(request.args.get('pred_error'))
-    predictions = p.set_problem(num_server, pred_solver, pred_error)
+    deviation_prob = float(request.args.get('deviation_prob'))
+    predictions = p.set_problem(num_server, pred_solver, deviation_prob)
     predictions = [int(p) for p in predictions]
+    print(predictions)
     return predictions
 
 @app.route("/solve")
@@ -29,10 +30,8 @@ def solve():
     index_list = [int(x) for x in index_list.split(',')]
     values = p.solve_problem()
     cost = p.get_cost(index_list)
-    print("may way: ", cost, " ", index_list)
     costs = [cost]+values
     ranking = [sorted(costs).index(x) + 1 for x in costs]
     order = [i[0] for i in sorted(enumerate(costs), key=lambda x:x[1])]
     row_ind = [order.index(x) for x in range(0,len(costs))]
-    print(row_ind)
     return costs + ranking + row_ind

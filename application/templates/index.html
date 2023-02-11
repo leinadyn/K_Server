@@ -77,8 +77,8 @@
                 </select>
               </p>
               
-              <p>Please select the pred_error: 
-                <select id="pred_error">
+              <p>Please select the deviation_prob: 
+                <select id="deviation_prob">
                   <option>0</option>
                   <option>0.1</option>
                   <option>0.2</option>
@@ -195,7 +195,7 @@
           var num_serv = Number(document.getElementById('servers').value);
           var req_config = request_configs[document.getElementById('requests').value];
           var pred_solver_index = pred_solvers[document.getElementById('pred_solver').value];
-          var pred_error_index = Number(document.getElementById('pred_error').value);
+          var deviation_prob_index = Number(document.getElementById('deviation_prob').value);
           var text = document.getElementById('pred_vis').value;
 
           if (text == "Yes") {
@@ -209,25 +209,25 @@
             $('#map_box').append('<img src="/static/images/question.png" id="request" style="left: ' + request_list[0][0] + 'px; bottom: ' + request_list[0][1] + 'px;">');
           });
 
-          var k = await $.get('/init', { num_server:num_serv, pred_solver:pred_solver_index, pred_error:pred_error_index }).done(function (data) {
+          var k = await $.get('/init', { num_server:num_serv, pred_solver:pred_solver_index, deviation_prob:deviation_prob_index }).done(function (data) {
             predictions = data;
             return data;
           });
 
-          var icon = addIcons(num_serv, pred_solver_index, pred_error_index, k[0]);
+          var icon = addIcons(num_serv, k[0]);
 
           document.getElementById('time').style.visibility = "visible";
         }
       }
 
-      function addIcons(num_serv, pred_solver_index, pred_error_index, k) {
+      function addIcons(num_serv, ind) {
         for (let i = 0; i < num_serv; i++) {
             new_avatar = '<img src="/static/images/icon_' + i + '.png" id="avatar' + i + '" class="avatar" onclick="update_game(' + i + ');" style="bottom: ' + 10 + 'px; left: ' + (50+i*20) + 'px;">';
             $('#map_box').append(new_avatar);
             server_list.push("avatar" + i);
         }
         if (see_pred) {
-          document.getElementById("avatar" + k).style.borderStyle = "solid"
+          document.getElementById("avatar" + ind).style.borderStyle = "solid"
         }
       }
 

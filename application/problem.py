@@ -81,30 +81,24 @@ def set_request_config(k):
 
 
 
-def set_problem(num_server, pred_solver, pred_error):
+def set_problem(num_server, pred_solver, deviation_prob):
     global requests_config, initial_servers, solver, problem
     problem = ks.K_Server(initial_servers[:num_server], requests_config)
 
     solver = [problem.opt_solver, problem.random_solver, problem.greedy_solver, problem.wfa_network_solver, problem.ftp_solver]
     assert pred_solver != 4
-    pred_configs, pred_assigned = problem.generate_prediction_list(solver[pred_solver], pred_error)
+    pred_assigned = problem.generate_prediction_list(solver[pred_solver], deviation_prob)[1]
     return pred_assigned
 
 
 
 def solve_problem():
     global solver, problem
-    opt_net, opt_way = problem.execute_opt_network()
-    random, rand_way = problem.execute_random()
-    greedy, greed_way = problem.execute_greedy()
-    ftp, ftp_way = problem.execute_ftp()
-    wfa, wfa_way = problem.execute_wfa()
-
-    print("opt: ", opt_net, " ", opt_way, " ", get_cost(opt_way))
-    print("rand: ",random , " ", rand_way, " ", get_cost(rand_way))
-    print("greed: ",greedy , " ", greed_way, " ", get_cost(greed_way))
-    print("ftp: ",ftp , " ", ftp_way, " ", get_cost(ftp_way))
-    print("wfa: ",wfa , " ", wfa_way, " ", get_cost(wfa_way))
+    opt_net = problem.execute_opt_network()[0]
+    random = problem.execute_random()[0]
+    greedy = problem.execute_greedy()[0]
+    ftp = problem.execute_ftp()[0]
+    wfa = problem.execute_wfa()[0]
 
     eps = 0.01
 
